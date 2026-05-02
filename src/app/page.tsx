@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ChatAssistant } from "@/components/chat-assistant";
+import { ToolboxPanel } from "@/components/toolbox/toolbox-panel";
 
 interface Note {
   id: number;
@@ -22,6 +24,7 @@ export default function Home() {
 
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [editTagInput, setEditTagInput] = useState("");
+  const [toolboxOpen, setToolboxOpen] = useState(false);
 
   const fetchNotes = useCallback(async (search?: string) => {
     const url = search ? `/api/notes?q=${encodeURIComponent(search)}` : "/api/notes";
@@ -163,7 +166,15 @@ export default function Home() {
           <span className="bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-lg font-bold text-transparent">
             MindSnap
           </span>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setToolboxOpen(true)}
+              className="rounded-xl border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-all duration-200 hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-50/10"
+            >
+              🔧 工具箱
+            </button>
+            <ThemeToggle />
+          </div>
         </div>
       </nav>
 
@@ -421,6 +432,12 @@ export default function Home() {
           )}
         </div>
       </main>
+
+      {/* 工具箱面板 */}
+      <ToolboxPanel open={toolboxOpen} onClose={() => setToolboxOpen(false)} />
+
+      {/* AI 聊天助手 */}
+      <ChatAssistant />
     </div>
   );
 }
