@@ -18,6 +18,10 @@ export default function Home() {
   const [filterTag, setFilterTag] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // 编辑相关 state
+  const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [editTagInput, setEditTagInput] = useState("");
+
   const fetchNotes = useCallback(async (search?: string) => {
     const url = search ? `/api/notes?q=${encodeURIComponent(search)}` : "/api/notes";
     const res = await fetch(url);
@@ -46,6 +50,7 @@ export default function Home() {
     };
   }, [searchQuery, fetchNotes]);
 
+  // === 新建笔记的标签操作 ===
   const addTag = () => {
     const trimmed = tagInput.trim();
     if (trimmed && !tags.includes(trimmed)) {
@@ -58,6 +63,7 @@ export default function Home() {
     setTags(tags.filter((t) => t !== tag));
   };
 
+  // === 新建笔记提交 ===
   const handleSubmit = async () => {
     if (!content.trim()) {
       window.alert("请输入笔记内容");
@@ -82,6 +88,71 @@ export default function Home() {
       window.alert("网络错误，请重试");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // === 编辑笔记 ===
+  const handleEdit = (note: Note) => {
+    setEditingNote({ ...note });
+    setEditTagInput("");
+  };
+
+  const handleEditCancel = () => {
+    setEditingNote(null);
+    setEditTagInput("");
+  };
+
+  const addEditTag = () => {
+    if (!editingNote) return;
+    const trimmed = editTagInput.trim();
+    if (trimmed && !editingNote.tags.includes(trimmed)) {
+      setEditingNote({ ...editingNote, tags: [...editingNote.tags, trimmed] });
+      setEditTagInput("");
+    }
+  };
+
+  const removeEditTag = (tag: string) => {
+    if (!editingNote) return;
+    setEditingNote({ ...editingNote, tags: editingNote.tags.filter((t) => t !== tag) });
+  };
+
+  const handleEditSave = async () => {
+    if (!editingNote || !editingNote.content.trim()) {
+      window.alert("请输入笔记内容");
+      return;
+    }
+    try {
+      const res = await fetch(`/api/notes/${editingNote.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: editingNote.content, tags: editingNote.tags }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        window.alert(err.error ?? "更新失败");
+        return;
+      }
+      setEditingNote(null);
+      setEditTagInput("");
+      await fetchNotes(searchQuery.trim() || undefined);
+    } catch {
+      window.alert("网络错误，请重试");
+    }
+  };
+
+  // === 删除笔记 ===
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("确定要删除这条笔记吗？")) return;
+    try {
+      const res = await fetch(`/api/notes/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json();
+        window.alert(err.error ?? "删除失败");
+        return;
+      }
+      await fetchNotes(searchQuery.trim() || undefined);
+    } catch {
+      window.alert("网络错误，请重试");
     }
   };
 
@@ -214,27 +285,115 @@ export default function Home() {
                 key={note.id}
                 className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
               >
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
-                  {note.content}
-                </p>
+                {editingNote?.id === note.id ? (
+                  /* === 编辑模式 === */
+                  <div>
+                    <textarea
+                      value={editingNote.content}
+                      onChange={(e) =>
+                        setEditingNote({ ...editingNote, content: e.target.value })
+                      }
+                      rows={3}
+                      className="w-full resize-none rounded-lg border border-zinc-300 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+                    />
 
-                {note.tags.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {note.tags.map((tag) => (
+                    <div className="mt-3 flex gap-2">
+                      <input
+                        type="text"
+                        value={editTagInput}
+                        onChange={(e) => setEditTagInput(e.target.value)}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" && (e.preventDefault(), addEditTag())
+                        }
+                        placeholder="添加标签"
+                        className="flex-1 rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                      />
                       <button
-                        key={tag}
-                        onClick={() => setFilterTag(tag)}
-                        className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                        onClick={addEditTag}
+                        className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800"
                       >
-                        #{tag}
+                        添加
                       </button>
-                    ))}
+                    </div>
+
+                    {editingNote.tags.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {editingNote.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center gap-1 rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200"
+                          >
+                            {tag}
+                            <button
+                              onClick={() => removeEditTag(tag)}
+                              className="ml-0.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                            >
+                              &times;
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        onClick={handleEditSave}
+                        className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                      >
+                        保存更改
+                      </button>
+                      <button
+                        onClick={handleEditCancel}
+                        className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      >
+                        取消
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* === 展示模式 === */
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+                        {note.content}
+                      </p>
+                      <div className="ml-4 flex shrink-0 gap-1">
+                        <button
+                          onClick={() => handleEdit(note)}
+                          className="rounded p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                          title="编辑"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          onClick={() => handleDelete(note.id)}
+                          className="rounded p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                          title="删除"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+
+                    {note.tags.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {note.tags.map((tag) => (
+                          <button
+                            key={tag}
+                            onClick={() => setFilterTag(tag)}
+                            className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                          >
+                            #{tag}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-600">
+                      {new Date(note.createdAt).toLocaleString("zh-CN")}
+                    </p>
                   </div>
                 )}
-
-                <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-600">
-                  {new Date(note.createdAt).toLocaleString("zh-CN")}
-                </p>
               </div>
             ))
           )}
