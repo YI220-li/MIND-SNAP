@@ -17,7 +17,7 @@ const OPERATION_OPTIONS = [
 ];
 
 const INPUT_CLASS =
-  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20";
+  "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground transition-all focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10";
 
 function createRow(step: number): ProcessRow {
   return { id: step, name: "", device: "", clamping: "", params: "", inspection: "" };
@@ -153,46 +153,46 @@ ${aiResponse ? `\n---\n### AI 推荐\n${aiResponse}` : ""}`;
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* 零件信息 */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div>
-          <label className="mb-1 block text-xs text-zinc-500">零件名称</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted">零件名称</label>
           <input value={partName} onChange={(e) => setPartName(e.target.value)} placeholder="如：主轴" className={INPUT_CLASS} />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-zinc-500">零件图号</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted">零件图号</label>
           <input value={partNumber} onChange={(e) => setPartNumber(e.target.value)} placeholder="如：ZC-001" className={INPUT_CLASS} />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-zinc-500">材料牌号</label>
+          <label className="mb-1.5 block text-xs font-medium text-muted">材料牌号</label>
           <input value={material} onChange={(e) => setMaterial(e.target.value)} placeholder="如：45钢" className={INPUT_CLASS} />
         </div>
       </div>
 
       {/* 工艺路线表 */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-xl border border-border/50">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border text-left text-xs text-zinc-500">
-              <th className="px-2 py-2">序号</th>
-              <th className="px-2 py-2">工序</th>
-              <th className="px-2 py-2">设备</th>
-              <th className="px-2 py-2">装夹</th>
-              <th className="px-2 py-2">参数</th>
-              <th className="px-2 py-2">检验</th>
-              <th className="px-2 py-2"></th>
+            <tr className="border-b border-border bg-surface/50 text-left text-xs font-medium text-muted">
+              <th className="px-3 py-2.5">序号</th>
+              <th className="px-3 py-2.5">工序</th>
+              <th className="px-3 py-2.5">设备</th>
+              <th className="px-3 py-2.5">装夹</th>
+              <th className="px-3 py-2.5">参数</th>
+              <th className="px-3 py-2.5">检验</th>
+              <th className="px-3 py-2.5"></th>
             </tr>
           </thead>
           <tbody>
             {processes.map((row) => (
-              <tr key={row.id} className="border-b border-border/50">
-                <td className="px-2 py-1.5 text-center text-xs text-zinc-500">{row.id}</td>
+              <tr key={row.id} className="border-b border-border/30 transition-colors hover:bg-surface/30">
+                <td className="px-3 py-2 text-center text-xs text-zinc-500">{row.id}</td>
                 <td className="px-2 py-1.5">
                   <select
                     value={row.name}
                     onChange={(e) => updateRow(row.id, "name", e.target.value)}
-                    className="w-full rounded border border-border bg-background px-2 py-1.5 text-xs text-foreground focus:border-brand-500 focus:outline-none"
+                    className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-foreground transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
                   >
                     <option value="">选择</option>
                     {OPERATION_OPTIONS.map((op) => (
@@ -201,20 +201,22 @@ ${aiResponse ? `\n---\n### AI 推荐\n${aiResponse}` : ""}`;
                   </select>
                 </td>
                 <td className="px-2 py-1.5">
-                  <input value={row.device} onChange={(e) => updateRow(row.id, "device", e.target.value)} placeholder="设备" className="w-full rounded border border-border bg-background px-2 py-1.5 text-xs text-foreground focus:border-brand-500 focus:outline-none" />
+                  <input value={row.device} onChange={(e) => updateRow(row.id, "device", e.target.value)} placeholder="设备" className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-foreground transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10" />
                 </td>
                 <td className="px-2 py-1.5">
-                  <input value={row.clamping} onChange={(e) => updateRow(row.id, "clamping", e.target.value)} placeholder="装夹" className="w-full rounded border border-border bg-background px-2 py-1.5 text-xs text-foreground focus:border-brand-500 focus:outline-none" />
+                  <input value={row.clamping} onChange={(e) => updateRow(row.id, "clamping", e.target.value)} placeholder="装夹" className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-foreground transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10" />
                 </td>
                 <td className="px-2 py-1.5">
-                  <input value={row.params} onChange={(e) => updateRow(row.id, "params", e.target.value)} placeholder="参数" className="w-full rounded border border-border bg-background px-2 py-1.5 text-xs text-foreground focus:border-brand-500 focus:outline-none" />
+                  <input value={row.params} onChange={(e) => updateRow(row.id, "params", e.target.value)} placeholder="参数" className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-foreground transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10" />
                 </td>
                 <td className="px-2 py-1.5">
-                  <input value={row.inspection} onChange={(e) => updateRow(row.id, "inspection", e.target.value)} placeholder="检验" className="w-full rounded border border-border bg-background px-2 py-1.5 text-xs text-foreground focus:border-brand-500 focus:outline-none" />
+                  <input value={row.inspection} onChange={(e) => updateRow(row.id, "inspection", e.target.value)} placeholder="检验" className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-foreground transition-all focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10" />
                 </td>
                 <td className="px-2 py-1.5">
-                  <button onClick={() => removeRow(row.id)} className="rounded p-1 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10" title="删除">
-                    ✕
+                  <button onClick={() => removeRow(row.id)} className="rounded-lg p-1.5 text-zinc-400 transition-all hover:bg-red-50 hover:text-red-500 active:scale-90 dark:hover:bg-red-500/10" title="删除">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                   </button>
                 </td>
               </tr>
@@ -224,8 +226,11 @@ ${aiResponse ? `\n---\n### AI 推荐\n${aiResponse}` : ""}`;
       </div>
 
       {/* 添加工序按钮 */}
-      <button onClick={addRow} className="w-full rounded-lg border border-dashed border-border py-2 text-sm text-zinc-500 transition-colors hover:border-brand-500 hover:text-brand-600">
-        ＋ 添加工序
+      <button onClick={addRow} className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border py-2.5 text-sm text-zinc-500 transition-all hover:border-indigo-400 hover:bg-indigo-50/50 hover:text-indigo-600 active:scale-[0.99] dark:hover:bg-indigo-500/5">
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        添加工序
       </button>
 
       {/* 操作按钮 */}
@@ -233,32 +238,77 @@ ${aiResponse ? `\n---\n### AI 推荐\n${aiResponse}` : ""}`;
         <button
           onClick={handleAiRecommend}
           disabled={aiLoading}
-          className="rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2.5 text-sm font-medium text-white transition-all hover:shadow-md disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/15 transition-all duration-200 hover:shadow-lg hover:shadow-indigo-500/20 active:scale-95 disabled:opacity-50 disabled:shadow-none"
         >
-          {aiLoading ? "生成中..." : "🤖 AI 推荐工艺"}
+          {aiLoading ? (
+            <>
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              生成中...
+            </>
+          ) : (
+            <>
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+              </svg>
+              AI 推荐工艺
+            </>
+          )}
         </button>
         <button
           onClick={handleSave}
-          className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-50/10"
+          className="flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-indigo-600 active:scale-95 dark:hover:border-indigo-700 dark:hover:bg-indigo-500/10"
         >
-          💾 保存为笔记
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 3v4h4M12 11v6m-3-3h6" />
+          </svg>
+          保存为笔记
         </button>
         <button
           onClick={handleClear}
-          className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-zinc-500 transition-all hover:bg-zinc-100 hover:text-foreground dark:hover:bg-zinc-800"
+          className="flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-zinc-500 transition-all hover:bg-zinc-100 hover:text-foreground active:scale-95 dark:hover:bg-zinc-800"
         >
-          🗑️ 清空
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+          </svg>
+          清空
         </button>
       </div>
 
-      {saveMsg && <p className="text-sm text-green-600 dark:text-green-400">{saveMsg}</p>}
+      {saveMsg && (
+        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+          {saveMsg}
+        </div>
+      )}
 
       {/* AI 推荐预览 */}
       {(aiResponse || aiLoading) && (
-        <div className="rounded-xl border border-border bg-background p-4">
-          <p className="mb-2 text-xs font-medium text-zinc-500">🤖 AI 推荐工艺路线：</p>
+        <div className="rounded-2xl border border-border/50 bg-surface/50 p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500">
+              <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+              </svg>
+            </div>
+            <p className="text-xs font-semibold text-muted">AI 推荐工艺路线</p>
+          </div>
           <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-            {aiResponse || <span className="animate-pulse text-zinc-400">生成中...</span>}
+            {aiResponse || (
+              <div className="flex items-center gap-2 text-zinc-400">
+                <div className="flex gap-1">
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-400 [animation-delay:0ms]" />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-400 [animation-delay:150ms]" />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-400 [animation-delay:300ms]" />
+                </div>
+                正在生成推荐...
+              </div>
+            )}
           </div>
         </div>
       )}
