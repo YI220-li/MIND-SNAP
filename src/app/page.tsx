@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { ChatAssistant } from "@/components/chat-assistant";
 import { ToolboxPanel } from "@/components/toolbox/toolbox-panel";
 import { ShaftDesignAgent } from "@/components/toolbox/shaft-design-agent";
+import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 
 interface Note {
   id: number;
@@ -488,6 +489,9 @@ export default function Home() {
 
       {/* AI 聊天助手 */}
       <ChatAssistant />
+
+      {/* PWA 安装提示 */}
+      <PwaInstallPrompt />
     </div>
   );
 }

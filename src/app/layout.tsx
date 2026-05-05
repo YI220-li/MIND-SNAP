@@ -17,6 +17,10 @@ export const metadata: Metadata = {
   title: "MindSnap",
   description: "个人闪念笔记，随时记录想法",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192x192.png",
+    apple: "/icons/icon-192x192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
