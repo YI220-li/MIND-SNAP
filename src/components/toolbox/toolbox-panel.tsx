@@ -7,8 +7,10 @@ import { StandardParts } from "./standard-parts";
 import { FormulaLibrary } from "./formula-library";
 import { UnitConverter } from "./unit-converter";
 import { StressSimulator } from "./stress-simulator";
+import { ProcessTemplate } from "./process-template";
+import { WeeklyReport } from "./weekly-report";
 
-type Tool = "tolerance" | "gear" | "parts" | "formula" | "unit" | "stress";
+type Tool = "tolerance" | "gear" | "parts" | "formula" | "unit" | "stress" | "process" | "report";
 
 const TOOLS: { id: Tool; label: string; icon: string }[] = [
   { id: "tolerance", label: "公差查询", icon: "📐" },
@@ -17,6 +19,8 @@ const TOOLS: { id: Tool; label: string; icon: string }[] = [
   { id: "formula", label: "公式库", icon: "📐" },
   { id: "unit", label: "单位换算", icon: "📏" },
   { id: "stress", label: "应力集中", icon: "🔬" },
+  { id: "process", label: "工艺模板", icon: "🏭" },
+  { id: "report", label: "周报生成", icon: "📊" },
 ];
 
 interface ToolboxPanelProps {
@@ -71,6 +75,8 @@ export function ToolboxPanel({ open, onClose }: ToolboxPanelProps) {
           {activeTool === "formula" && <FormulaLibrary />}
           {activeTool === "unit" && <UnitConverter />}
           {activeTool === "stress" && <StressSimulator />}
+          {activeTool === "process" && <ProcessTemplate />}
+          {activeTool === "report" && <WeeklyReport />}
         </div>
       </div>
     </div>

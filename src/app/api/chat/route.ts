@@ -10,17 +10,27 @@ const mimo = createAnthropic({
 export async function POST(request: Request) {
   const body = await request.json();
   const uiMessages = body.messages ?? [];
+  const systemPrompt: string = body.system ?? MECH_DESIGN_SYSTEM_PROMPT;
 
-  const messages = uiMessages.map((m: { role: string; parts?: { type: string; text: string }[]; content?: string }) => ({
-    role: m.role,
-    content: m.parts
-      ? m.parts.filter((p) => p.type === "text").map((p) => p.text).join("")
-      : m.content ?? "",
-  }));
+  const messages = uiMessages.map(
+    (m: {
+      role: string;
+      parts?: { type: string; text: string }[];
+      content?: string;
+    }) => ({
+      role: m.role,
+      content: m.parts
+        ? m.parts
+            .filter((p) => p.type === "text")
+            .map((p) => p.text)
+            .join("")
+        : (m.content ?? ""),
+    }),
+  );
 
   const result = streamText({
     model: mimo("mimo-v2-pro"),
-    system: MECH_DESIGN_SYSTEM_PROMPT,
+    system: systemPrompt,
     messages,
   });
 
