@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ChatAssistant } from "@/components/chat-assistant";
 import { ToolboxPanel } from "@/components/toolbox/toolbox-panel";
+import { ShaftDesignAgent } from "@/components/toolbox/shaft-design-agent";
 
 interface Note {
   id: number;
@@ -45,6 +46,7 @@ export default function Home() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [editTagInput, setEditTagInput] = useState("");
   const [toolboxOpen, setToolboxOpen] = useState(false);
+  const [shaftOpen, setShaftOpen] = useState(false);
 
   const fetchNotes = useCallback(async (search?: string) => {
     const url = search ? `/api/notes?q=${encodeURIComponent(search)}` : "/api/notes";
@@ -190,6 +192,13 @@ export default function Home() {
             MindSnap
           </span>
           <div className="flex items-center gap-1">
+            <button
+              onClick={() => setShaftOpen(true)}
+              className="rounded-full p-2.5 text-muted transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-600 hover:rotate-12 dark:hover:bg-indigo-500/10"
+              title="轴系设计"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4m-3.93 7.07l-2.83-2.83M7.76 7.76L4.93 4.93"/></svg>
+            </button>
             <button
               onClick={() => setToolboxOpen(true)}
               className="rounded-full p-2.5 text-muted transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-600 hover:rotate-12 dark:hover:bg-indigo-500/10"
@@ -473,6 +482,9 @@ export default function Home() {
 
       {/* 工具箱面板 */}
       <ToolboxPanel open={toolboxOpen} onClose={() => setToolboxOpen(false)} />
+
+      {/* 轴系设计向导 */}
+      <ShaftDesignAgent open={shaftOpen} onClose={() => setShaftOpen(false)} />
 
       {/* AI 聊天助手 */}
       <ChatAssistant />
